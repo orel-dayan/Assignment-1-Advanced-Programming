@@ -1,6 +1,7 @@
 # Assignment 1 for "Advanced Programming"
 
 
+In results folder there are screenshots and results of the commands we did .
 
 ## Get Started
 
@@ -12,31 +13,38 @@ make all
 ```
 
 
-
-
 For open the server run the following commands in the terminal:
 
 ```bash
 ./myshell
+           ───▄▀▀▀▄▄▄▄▄▄▄▀▀▀▄───
+            ───█▒▒░░░░░░░░░▒▒█───
+            ────█░░█░░░░░█░░█────
+            ─▄▄──█░░░▀█▀░░░█──▄▄─
+            █░░█─▀▄░░░░░░░▄▀─█░░█
+            █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
+            █░░╦─╦╔╗╦─╔╗╔╗╔╦╗╔╗░░█
+            █░░║║║╠─║─║─║║║║║╠─░░█
+            █░░╚╩╝╚╝╚╝╚╝╚╝╩─╩╚╝░░█
+            █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█
 hello: date >> myfile
 hello: cat myfile
-IST 19:21:11 2024 פבר 01 ה'
+Wed 05 Jun 2024 03:29:50 PM IDT
 hello: date -u >> myfile
 hello: cat myfile
-IST 19:21:11 2024 פבר 01 ה'
-UTC 17:21:31 2024 פבר 01 ה'
+Wed 05 Jun 2024 03:29:50 PM IDT
+Wed 05 Jun 2024 12:30:11 PM UTC
 hello: wc -l < myfile
 2
-hello: prompt = hi
+hello: prompt = hi:
 hi: mkdir mydir
 hi: cd mydir
 hi: pwd
-/home/omer/projects/assignment-1-advanced-programming/mydir
-hi: touch file1 file2 file3
-hi: ls
+/home/orel/Documents/AP_Task1/mydir
+hi: touch file1touch file1 file2 file3
+hi: ls 
 file1  file2  file3
 hi: !!
-hi: ls
 file1  file2  file3
 hi: echo abc xyz
 abc xyz
@@ -48,12 +56,12 @@ hi: ls no_such_file
 ls: cannot access 'no_such_file': No such file or directory
 hi: echo $?
 2
-hi: ls no_such_file 2> file
+hi: ls no_such_ls no_such_file 2> file
 hi: ^C
-You typed Control-C
-hi: cat > colors.txt
-blue
-black
+You typed Control-C!
+hi: cat > colors.txt 
+blue 
+black 
 red
 red
 green
@@ -63,8 +71,8 @@ red
 red
 blue
 hi: cat colors.txt
-blue
-black
+blue 
+black 
 red
 red
 green
@@ -73,9 +81,9 @@ green
 red
 red
 blue
-hi: cat colors.txt | cat | cat | cat
-blue
-black
+hi: cat colors.txt | cat | cat | cat 
+blue 
+black 
 red
 red
 green
@@ -84,10 +92,11 @@ green
 red
 red
 blue
-hi: sort colors.txt | uniq –c | sort –r | head -3
-sort: cannot read: –r: No such file or directory
+hi: sort colorssort colors.txt | uniq –c | sort –r | head -3
 uniq: –c: No such file or directory
+sort: cannot read: –r: No such file or directory
 hi: quit
+
 ```
 
 ## Authors

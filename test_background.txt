@@ -1,0 +1,40 @@
+
+            ───▄▀▀▀▄▄▄▄▄▄▄▀▀▀▄───
+            ───█▒▒░░░░░░░░░▒▒█───
+            ────█░░█░░░░░█░░█────
+            ─▄▄──█░░░▀█▀░░░█──▄▄─
+            █░░█─▀▄░░░░░░░▄▀─█░░█
+            █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
+            █░░╦─╦╔╗╦─╔╗╔╗╔╦╗╔╗░░█
+            █░░║║║╠─║─║─║║║║║╠─░░█
+            █░░╚╩╝╚╝╚╝╚╝╚╝╩─╩╚╝░░█
+            █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█
+hello: if date | grep Fri
+>> then echo " shabat"
+>> else echo " hard way"
+>> fi
+" hard way"
+hello: $person = David
+hello: echo person
+David
+hello: ping 8.8.8.8 > file.txt & 
+hello: ls 
+colors.txt  docs  file.txt  Makefile  mydir  myfile  myshell  objects  README.md  source  test.txt
+hello: ls -l
+total 72
+-rw-r--r-- 1 orel orel    51 Jun  5 16:23 colors.txt
+drwxrwxr-x 2 orel orel  4096 Jun  4 20:56 docs
+-rw-r--r-- 1 orel orel  1828 Jun  5 16:36 file.txt
+-rw-rw-r-- 1 orel orel   335 Jun  5 15:29 Makefile
+drwxrwxr-x 2 orel orel  4096 Jun  5 15:40 mydir
+-rw-r--r-- 1 orel orel    64 Jun  5 15:30 myfile
+-rwxrwxr-x 1 orel orel 30128 Jun  5 16:33 myshell
+drwxrwxr-x 2 orel orel  4096 Jun  5 16:26 objects
+-rw-rw-r-- 1 orel orel  1253 Jun  5 01:19 README.md
+drwxrwxr-x 2 orel orel  4096 Jun  5 13:15 source
+-rw-rw-r-- 1 orel orel  1953 Jun  5 16:31 test.txt
+hello: ^C
+You typed Control-C!
+hello: quit
+
+        

@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <string.h>
 #include <signal.h>
 #include <unistd.h>
@@ -16,9 +15,24 @@ int variable_capacity = 0;
 
 char prompt[PROMPT_LENGTH] = "\033[1;36mhello: \033[0m";
 char full_prompt[PROMPT_LENGTH] = {'\0'};
+const char *banner =
+    "\033[1;32m"
+    // Green
+    "            ───\033[1;34m▄▀▀▀▄▄▄▄▄▄▄▀▀▀▄───\033[0m\n"
+    "            ───\033[1;34m█▒▒░░░░░░░░░▒▒█───\033[0m\n"
+    "            ────\033[1;34m█░░█░░░░░█░░█────\033[0m\n"
+    "            ─\033[1;34m▄▄──█░░░▀█▀░░░█──▄▄─\033[0m\n"
+    "            \033[1;32m█░░█─▀▄░░░░░░░▄▀─█░░█\033[0m\n"
+    "            \033[1;31m█▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█\033[0m\n"
+    "            \033[1;36m█░░╦─╦╔╗╦─╔╗╔╗╔╦╗╔╗░░█\033[0m\n"
+    "            \033[1;33m█░░║║║╠─║─║─║║║║║╠─░░█\033[0m\n"
+    "            \033[1;35m█░░╚╩╝╚╝╚╝╚╝╚╝╩─╩╚╝░░█\033[0m\n"
+    "            \033[1;37m█▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█\033[0m\n";
 
 int main(int argc, char *argv[])
 {
+    clear();
+    printf("%s", banner);
 
     int is_prev_command = 0;
     char command_history[COMMAND_HISTORY_SIZE][128];
@@ -29,8 +43,8 @@ int main(int argc, char *argv[])
     int command_history_index = 0;
     int is_history_command = 0;
     int run_in_background;
-    int prev_command_status;
-    char *history_command, *previousCommand, *user_input;
+    int prev_command_status = 0;
+    char *executedCommandHistory, *previousCommand, *user_input;
 
     int command_status = -1, is_if_statement = 0, is_if_condition_true = -1, is_else_detected = 0;
 
@@ -40,25 +54,34 @@ int main(int argc, char *argv[])
     {
         if (is_if_statement)
         {
-            user_input = readline(">> ");
+            user_input = readline(">> "); // for if statement
+
+            if (!user_input)
+                break;
+
+            add_history(user_input);
+            strcpy(input, user_input);
         }
         else if (!is_history_command)
         {
             user_input = readline(prompt);
+
+            if (!user_input)
+                break;
+
+            add_history(user_input);
+            strcpy(input, user_input);
         }
         else
         {
-            strcpy(input, history_command);
-            is_history_command = 0;
+            strcpy(input, executedCommandHistory);
         }
 
-        if (!user_input) break;
-        
+        is_history_command = 0;
 
-        add_history(user_input);
-        strcpy(input, user_input);
-
-        if (is_if_statement == 1) 
+        // how to handle if statement in shell , if condition is true then execute the command after then
+        // if condition is false then execute the command after else
+        if (is_if_statement == 1)
         {
             is_if_condition_true = 0;
             if (strncmp(input, "then", 4) == 0)
@@ -160,7 +183,7 @@ int main(int argc, char *argv[])
             free_variables();
             return 0;
         }
-
+        // Parse the input into arguments using whitespace as delimiter
         char *input_args[MAX_ARGS] = {NULL};
         char *token;
         int i = 0;
@@ -174,6 +197,9 @@ int main(int argc, char *argv[])
 
         if (input_args[0] == NULL)
             continue;
+
+        // for color prompt and preseve the color
+        // also and more important , check if the input is prompt command so we can change the prompt
 
         if (!strcmp(input_args[0], "prompt") && i > 1 && !strcmp(input_args[1], "=") && i == PROMPT_COMMAND_LENGTH)
         {
@@ -197,7 +223,6 @@ int main(int argc, char *argv[])
             continue;
         }
 
-        
         if (!strcmp(input_args[0], "cd") && i == 2)
         {
             if (chdir(input_args[1]) != 0)
@@ -209,11 +234,12 @@ int main(int argc, char *argv[])
 
         if (!strcmp(input_args[0], "!!") && i == 1)
         {
-            if (command_status == -1) continue;
+            if (command_status == -1)
+                continue;
             previousCommand = command_history[(command_history_index - 2) % COMMAND_HISTORY_SIZE];
 
             is_history_command = 1;
-            history_command = previousCommand;
+            executedCommandHistory = previousCommand;
             continue;
         }
 
@@ -250,7 +276,7 @@ int main(int argc, char *argv[])
         if (pid == 0)
         {
             int redirect_stdout_index = -1, append_stdout_index = -1;
-            int redirect_stderr_index = -1;
+            int redirect_stderr_index = -1, redirect_input_index = -1;
 
             for (int i = 0; i < MAX_ARGS; i++)
             {
@@ -265,6 +291,10 @@ int main(int argc, char *argv[])
                 else if (strcmp(">>", input_args[i]) == 0)
                 {
                     append_stdout_index = i;
+                }
+                else if (strcmp("<", input_args[i]) == 0)
+                {
+                    redirect_input_index = i;
                 }
                 else if (strcmp("2>", input_args[i]) == 0)
                 {
@@ -338,6 +368,18 @@ int main(int argc, char *argv[])
                     strcpy(input_args[i], get_variable(variable_name));
                 }
             }
+            if (redirect_input_index != -1)
+            {
+                int fd = open(input_args[redirect_input_index + 1], O_RDONLY);
+                if (fd == -1)
+                {
+                    perror("open");
+                    exit(EXIT_FAILURE);
+                }
+                dup2(fd, STDIN_FILENO);
+                close(fd);
+                input_args[redirect_input_index] = NULL;
+            }
 
             if (redirect_stderr_index != -1)
             {
@@ -377,20 +419,21 @@ int main(int argc, char *argv[])
             if (run_in_background == 0)
             {
                 pid_t wpid = wait(&command_status);
-                prev_command_status = command_status;
-                is_prev_command = 1;
                 if (wpid == -1)
                 {
                     perror("wait");
                 }
+                else
+                {
+                    prev_command_status = WEXITSTATUS(command_status);
+                }
+                is_prev_command = 1;
             }
         }
     }
 
     free_variables();
 }
-
-
 
 void handle_signal(int signum)
 {
@@ -400,20 +443,30 @@ void handle_signal(int signum)
     fflush(stdout);
 }
 
-void redirect_stdout(char *file_name, int is_append)
+void redirect_stdout(char *outputFile, int append_flag)
 {
     int fd;
     mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
 
-    if (is_append)
+    if (append_flag)
     {
-        fd = open(file_name, O_WRONLY | O_APPEND | O_CREAT, mode);
+        fd = open(outputFile, O_WRONLY | O_APPEND | O_CREAT, mode);
     }
     else
     {
-        fd = open(file_name, O_WRONLY | O_TRUNC | O_CREAT, mode);
+        fd = open(outputFile, O_WRONLY | O_TRUNC | O_CREAT, mode);
     }
-    dup2(fd, 1);
+
+    if (fd == -1)
+    {
+        perror("open");
+        exit(EXIT_FAILURE);
+    }
+    if (dup2(fd, STDOUT_FILENO) == -1)
+    {
+        perror("dup2");
+        exit(EXIT_FAILURE);
+    }
     close(fd);
 }
 
@@ -423,19 +476,27 @@ void redirect_stderr(char *file_name)
     mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
 
     fd = open(file_name, O_WRONLY | O_TRUNC | O_CREAT, mode);
-
-    dup2(fd, STDERR_FILENO);
+    if (fd == -1)
+    {
+        perror("open");
+        exit(EXIT_FAILURE);
+    }
+    if (dup2(fd, STDERR_FILENO) == -1)
+    {
+        perror("dup2");
+        exit(EXIT_FAILURE);
+    }
     close(fd);
 }
 
-char *convert_int_to_string(int num)
+char *convert_int_to_string(int number)
 {
-    int buffer_size = snprintf(NULL, 0, "%d", num) + 1;
+    int buffer_size = snprintf(NULL, 0, "%d", number) + 1;
     char *str = (char *)malloc(buffer_size);
 
     if (str != NULL)
     {
-        snprintf(str, buffer_size, "%d", num);
+        snprintf(str, buffer_size, "%d", number);
     }
 
     return str;
