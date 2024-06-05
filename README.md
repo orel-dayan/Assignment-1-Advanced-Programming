@@ -10,12 +10,7 @@ In results folder there are screenshots and results of the commands we did .
 sudo apt-get install libreadline-dev
 
 make all
-```
 
-
-For open the server run the following commands in the terminal:
-
-```bash
 ./myshell
            ───▄▀▀▀▄▄▄▄▄▄▄▀▀▀▄───
             ───█▒▒░░░░░░░░░▒▒█───
